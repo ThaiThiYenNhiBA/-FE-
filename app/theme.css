@@ -1,0 +1,39 @@
+/* globals.css or theme.css */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-theme {
+    background-color: #121212;
+    /* Dark background color */
+    color: #ffffff;
+    /* Light text color */
+}
+
+/* Additional styles for specific elements */
+
+
+.form-control {
+    background-color: #333;
+    /* Darker input fields */
+    color: #fff;
+    /* Light text for inputs */
+}
+
+.form-control::placeholder {
+    color: #bbb;
+    /* Placeholder text color */
+}
+
+/* Button styles */
+.btn-custom {
+    background-color: white;
+    /* Custom button color */
+    color: rgb(28, 27, 27);
+}
+
+.btn-custom:hover {
+    background-color: #e8e8f1;
+    color: #121212;
+    /* Darker on hover */
+}
