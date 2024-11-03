@@ -74,6 +74,7 @@ export default function UserProfile() {
   }, []);
 
   return (
+
     <div className="profile-page container d-flex justify-content-start align-items-start mt-5">
       <div className="d-flex justify-content-between">
         <button onClick={toggleTheme} className="btn btn-custom border bg-white mb-3">
@@ -89,6 +90,7 @@ export default function UserProfile() {
             className="img-fluid rounded-circle"
             style={{ width: '150px', height: '150px', objectFit: 'cover' }}
           />
+
         </div>
         <p className="fw-bold">{formData.userName || "User Name"}</p>
       </div>
