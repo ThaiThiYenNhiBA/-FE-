@@ -74,7 +74,7 @@ export default function Profile() {
         <div className="profile-sidebar col-md-3 text-center p-3">
           <div className="d-flex justify-content-center position-relative mb-3">
             <img
-              src={profileImage}
+              src="/Images/OIP.png"
               alt="Profile"
               className="img-fluid rounded-circle"
               style={{ width: '150px', height: '150px', objectFit: 'cover' }}
