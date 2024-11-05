@@ -5,7 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function ProductDetail() {
-    const [selectedModel, setSelectedModel] = useState("iPhone 7");
+    const [selectedModel, setSelectedModel] = useState("Chapter 1");
+    const [showAllChapters, setShowAllChapters] = useState(false);
+
+    const chapters = [
+        "Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4", "Chapter 5",
+        "Chapter 6", "Chapter 7", "Chapter 8", "Chapter 9", "Chapter 10",
+        "Chapter 11", "Chapter 12", "Chapter 13", "Chapter 14", "Chapter 15"
+    ];
+
+    // Giới hạn hiển thị 10 chapter đầu tiên hoặc tất cả chapter
+    const visibleChapters = showAllChapters ? chapters : chapters.slice(0, 10);
 
     return (
         <div>
@@ -16,10 +26,6 @@ export default function ProductDetail() {
             <div className="product-detail-container">
                 <div className="product-images">
                     <Image src="/Images/OIP.png" alt="Case Santa Matryoshka" width={300} height={400} />
-                    {/* <div className="thumbnail-images">
-                        <Image src="/Images/OIP.png" alt="Thumbnail 1" width={50} height={50} />
-                        <Image src="/Images/OIP.png" alt="Thumbnail 2" width={50} height={50} />
-                    </div> */}
                 </div>
 
                 <div className="product-info">
@@ -28,18 +34,29 @@ export default function ProductDetail() {
                         <span className="badge hot">Hot</span>
                     </div>
                     <div className="product-options">
-                        <label htmlFor="phone-model">Chapter List:</label>
+                        <label htmlFor="chapter-list">Chapter List:</label>
                         <select
-                            id="phone-model"
+                            id="chapter-list"
                             value={selectedModel}
-                            onChange={(e) => setSelectedModel(e.target.value)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "showMore") {
+                                    setShowAllChapters(true);
+                                } else {
+                                    setSelectedModel(value);
+                                }
+                            }}
+                            className="w-full mt-2 p-2 border rounded"
                         >
-                            <option>Chapter 1</option>
-                            <option>Chapter 2</option>
-                            <option>Chapter 3</option>
-                            <option>Chapter 4</option>
-                            <option>Chapter 5</option>
-                            <option>Chapter 6</option>
+                            {visibleChapters.map((chapter, index) => (
+                                <option key={index} value={chapter}>
+                                    {chapter}
+                                </option>
+                            ))}
+                            {/* Thêm mục "Xem thêm" nếu chưa hiển thị toàn bộ chapters */}
+                            {!showAllChapters && (
+                                <option value="showMore">Xem thêm...</option>
+                            )}
                         </select>
                     </div>
                     <div className="product-attributes">

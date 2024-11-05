@@ -9,24 +9,31 @@ import { toast } from 'react-toastify';
 const Register: React.FC = () => {
   const router = useRouter();
 
-  // State để lưu trữ dữ liệu form và lỗi
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
+  const [userName, setuserName] = useState('');
   const [error, setError] = useState('');
 
-  const handleRegister = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(''); // Reset lỗi trước khi xử lý
+    setError('');
 
-    // Kiểm tra hợp lệ
-    if (!email || !name || !password) {
-      setError('Email, tên và mật khẩu không được để trống');
-      toast.error('Email, tên và mật khẩu không được để trống');
-    } else {
-      // Nếu hợp lệ, chuyển hướng sang trang confirm
-      router.push('/confirm');
-      toast.success('Đăng ký thành công!');
+    if (!email || !userName) {
+      setError('Email và tên không được để trống');
+      toast.error('Email và tên không được để trống');
+      return;
+    }
+
+    try {
+      const res = await registerApi(email, userName);
+      if (res && res.success) {
+        toast.success('Đăng ký thành công!');
+        router.push('/confirm');
+      } else {
+        toast.error(res.message || "Đăng ký không thành công!");
+      }
+    } catch (error) {
+      console.error("Register error:", error);
+      toast.error("Đã xảy ra lỗi trong quá trình đăng ký.");
     }
   };
 
@@ -58,26 +65,16 @@ const Register: React.FC = () => {
           <input
             type="text"
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={userName}
+            onChange={(e) => setuserName(e.target.value)}
             placeholder="Your name"
           />
         </div>
-        <div className="input-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Your password"
-          />
-        </div>
-        {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>} {/* Hiển thị lỗi nếu có */}
+        {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
         <button
           type="submit"
-          className={email && name && password ? "active" : "inactive"}
-          disabled={!email || !name || !password}
+          className={email && userName ? "active" : "inactive"}
+          disabled={!email || !userName}
         >
           Register
         </button>
@@ -94,3 +91,27 @@ const Register: React.FC = () => {
 };
 
 export default Register;
+
+// Hàm gọi API đăng ký
+async function registerApi(email: string, userName: string) {
+  console.log(email, userName)
+  try {
+    const response = await fetch('http://localhost:8082/api/accounts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, userName }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Đăng ký không thành công');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error during API call:", error);
+    throw error;
+  }
+}

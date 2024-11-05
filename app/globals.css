@@ -213,6 +213,67 @@ a:hover {
   text-decoration: underline;
 }
 
+.breadcrumb {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.product-detail-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.product-images img {
+  width: 300px;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-price .price-now {
+  font-size: 24px;
+  color: #d9534f;
+}
+
+.product-price .price-old {
+  text-decoration: line-through;
+  color: #999;
+}
+
+/* Related Products */
+.related-products {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.related-product-list {
+  display: flex;
+  gap: 10px;
+}
+
+.related-product-item {
+  width: 150px;
+  text-align: center;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #d9534f;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #5bc0de;
+  color: white;
+}
+
 /* Tailwind utility class */
 @layer utilities {
   .text-balance {
