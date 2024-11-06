@@ -1,0 +1,38 @@
+/* styles.css hoặc file CSS tương ứng */
+.products-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .product-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .reaction-menu {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .comments-section {
+    margin-top: 16px;
+  }
+  
+  .comment {
+    margin: 8px 0;
+  }
+  
+  .inputField {
+    width: calc(100% - 100px);
+    padding: 8px;
+    margin-right: 8px;
+  }
+  
+  .buttonField {
+    padding: 8px 16px;
+  }
+  
+  

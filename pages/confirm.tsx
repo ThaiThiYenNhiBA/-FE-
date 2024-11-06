@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
+import '../app/globals.css';
 
 const Confirm: React.FC = () => {
   const router = useRouter();
