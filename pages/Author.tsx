@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../app/author.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import router, { useRouter } from 'next/router';
 
 interface FormData {
   fullname: string;
@@ -76,8 +77,13 @@ export default function Author() {
             <p className="border rounded p-2 w-full">{formData.type}</p>
           </div>
 
-          <button type="button" className="btn btn-primary">Go back</button>
-        </div>
+          <button
+            className="btn btn-dark w-auto mb-3"
+            onClick={() => router.push('/user_profile')}
+          >
+            Go back
+          </button> 
+           </div>
       </div>
     </div>
   );

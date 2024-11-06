@@ -92,7 +92,7 @@ const Login = () => {
       <p>
         <br />
         No account?{' '}
-        <Link href="Register">
+        <Link href="/Register">
           Sign up
         </Link>
       </p>

@@ -85,7 +85,7 @@ const Register: React.FC = () => {
       <p>
         <br />
         Have an account?{' '}
-        <Link href="/">
+        <Link href="/Login">
           Sign in
         </Link>
       </p>

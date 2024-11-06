@@ -4,7 +4,7 @@ body {
 }
 
 .dark-theme {
-    background-color: #121212;
+    background-color: black;
     /* Dark background color */
     color: #ffffff;
     /* Light text color */
@@ -14,9 +14,9 @@ body {
 
 
 .form-control {
-    background-color: #333;
+    background-color: white;
     /* Darker input fields */
-    color: #fff;
+    color: black;
     /* Light text for inputs */
 }
 

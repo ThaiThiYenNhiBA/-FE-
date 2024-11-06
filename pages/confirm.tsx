@@ -88,7 +88,7 @@ const Confirm: React.FC = () => {
       <p>
         <br />
         Already confirmed?{' '}
-        <Link href="/">
+        <Link href="/Login">
           Sign in
         </Link>
       </p>

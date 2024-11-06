@@ -75,7 +75,7 @@ export default function RenewPassword() {
       {/* Footer */}
       <p style={{ marginTop: '20px' }}>
         Remembered your password?{' '}
-        <Link href="/">
+        <Link href="/Login">
           Sign in
         </Link>
       </p>

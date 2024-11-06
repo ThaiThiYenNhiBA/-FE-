@@ -1,4 +1,5 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import "../app/globals.css";
 import "../app/theme.css";
@@ -6,46 +7,83 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 interface FormData {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
+  firstname: string;
+  lastname: string;
+  dateofbirth: string;
   gender: string;
   location: string;
   status: string;
-  userName: string;
-  password: string;
+  username: string;
+  passwordhash: string;
   email: string;
-  phoneNumber: string;
+  phonenumber: string;
+  avatar?: string;
 }
 
 export default function Profile() {
   const router = useRouter();
+  const userId = '035f873-5a78-4b5e-9a41-8ae2a443d842';
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle('dark-theme', isDarkTheme);
+    fetchProfileData();
   }, [isDarkTheme]);
 
   const toggleTheme = () => setIsDarkTheme(!isDarkTheme);
 
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
+    firstname: '',
+    lastname: '',
+    dateofbirth: '',
     gender: '',
     location: '',
     status: '',
-    userName: '',
-    password: '',
+    username: '',
+    passwordhash: '',
     email: '',
-    phoneNumber: '',
+    phonenumber: '',
   });
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showpasswordhash, setShowpasswordhash] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
-  const [showPhoneNumber, setShowPhoneNumber] = useState(false);
+  const [showphonenumber, setShowphonenumber] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
+  const fetchProfileData = async () => {
+    try {
+      const response = await fetch(`http://localhost:8082/api/user/${userId}`);
+      if (response.ok) {
+        const profileData = await response.json();
+        setFormData((prevData) => ({ ...prevData, ...profileData }));
+        setProfileImage(profileData.avatar || null);
+      } else {
+        console.error('Failed to fetch profile data, status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching profile data:', error.message);
+    }
+  };
+  
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+  
+    // Chỉ chuyển đổi nếu có giá trị
+    const date = value ? new Date(value).toISOString() : "";
+  
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: date, // Lưu chuỗi ngày ở định dạng ISO
+    }));
+  };
+  
+  
+  const handleSelectChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  }
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
@@ -53,51 +91,75 @@ export default function Profile() {
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(e.target.files[0]);
+        const reader = new FileReader();
+        reader.onload = () => {
+            setProfileImage(reader.result as string); // Set the base64 image data
+        };
+        reader.readAsDataURL(e.target.files[0]); // Read the file as a data URL
     }
-  };
+};
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log('Profile saved:', formData);
-  };
+// Update user profile data in the backend
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`http://localhost:8082/api/user/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...formData,
+        avatar: profileImage,
+      }),
+    });
+    if (response.ok) {
+      alert('Profile updated successfully!');
+    } else {
+      console.error('Failed to update profile');
+      alert('Failed to update profile. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    alert('Failed to update profile. Please try again.');
+  }
+};
 
   return (
     <div className="container mt-5">
+      <div className="d-flex justify-content-between">
+      <button onClick={toggleTheme} className="btn btn-custom border border-black bg-white w-fit">
+        <i className={`bi ${isDarkTheme ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
+      </button>
+      </div>
+
       <div className="row">
         {/* Sidebar */}
         <div className="profile-sidebar col-md-3 text-center p-3">
           <div className="d-flex justify-content-center position-relative mb-3">
             <img
-              src={profileImage || "/images/profile.JPG"}
-              alt=""
+              src={profileImage || "~/images/avatar10.png"}
+              alt="Profile"
               className="img-fluid rounded-circle"
               style={{ width: '150px', height: '150px', objectFit: 'cover' }}
             />
             <div className="file-input-icon position-absolute" style={{ bottom: '0', cursor: 'pointer' }}>
               <label htmlFor="imageUpload" className="position-relative" style={{ display: 'inline-block' }}>
                 <i className="bi bi-camera-fill" style={{ fontSize: '1.5rem', color: 'white', backgroundColor: 'black', borderRadius: '50%', padding: '8px' }}></i>
-                <input
-                  type="file"
-                  id="imageUpload"
-                  accept="image/*"
-                  onChange={handleImageUpload}
+                <input 
+                  type="file" 
+                  id="imageUpload" 
+                  accept="image/*" 
+                  onChange={handleImageUpload} 
                   className="d-none"
                 />
               </label>
             </div>
           </div>
-          <p className="fw-bold">{formData.userName || "User Name"}</p>
-          <button className="btn btn-dark w-auto mb-3">Become an Author</button>
-          <button onClick={toggleTheme} className="btn btn-custom border border-black bg-white">
-            {isDarkTheme ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-          </button>
+          <p className="fw-bold">{formData.username || "User Name"}</p>
+          <button className="btn btn-dark w-auto">Become an Author</button>
         </div>
 
         {/* Profile Settings */}
@@ -109,8 +171,8 @@ export default function Profile() {
               <input
                 type="text"
                 className="form-control"
-                name="userName"
-                value={formData.userName}
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
               />
             </div>
@@ -121,8 +183,8 @@ export default function Profile() {
                 <input
                   type="text"
                   className="form-control"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="firstname"
+                  value={formData.firstname}
                   onChange={handleChange}
                 />
               </div>
@@ -131,93 +193,37 @@ export default function Profile() {
                 <input
                   type="text"
                   className="form-control"
-                  name="lastName"
-                  value={formData.lastName}
+                  name="lastname"
+                  value={formData.lastname}
                   onChange={handleChange}
                 />
-              </div>
-            </div>
-
-            <div className="row mb-3">
-              <div className="col">
-                <label className="form-label">Date of Birth</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="col">
-                <label className="form-label">Gender</label>
-                <select
-                  className="form-control"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="row mb-3">
-              <div className="col">
-                <label className="form-label">Password</label>
-                <div className="input-group">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className="form-control"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                  />
-                  <i
-                    className={`bi ${showPassword ? "bi-eye" : "bi-eye-slash"} position-absolute top-50 end-0 translate-middle-y px-3 cursor-pointer`}
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{ fontSize: "1.25rem", zIndex: 10 }}
-                  ></i>
-                </div>
-              </div>
-              <div className="col">
-                <label className="form-label">Email</label>
-                <div className="input-group">
-                  <input
-                    type={showEmail ? "text" : "password"}
-                    className="form-control"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                  <i
-                    className={`bi ${showEmail ? "bi-eye" : "bi-eye-slash"} position-absolute top-50 end-0 translate-middle-y px-3 cursor-pointer`}
-                    onClick={() => setShowEmail(!showEmail)}
-                    style={{ fontSize: "1.25rem", zIndex: 10 }}
-                  ></i>
-                </div>
               </div>
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Phone Number</label>
-              <div className="input-group">
-                <input
-                  type={showPhoneNumber ? "text" : "password"}
-                  className="form-control"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                />
-                <i
-                  className={`bi ${showPhoneNumber ? "bi-eye" : "bi-eye-slash"} position-absolute top-50 end-0 translate-middle-y px-3 cursor-pointer`}
-                  onClick={() => setShowPhoneNumber(!showPhoneNumber)}
-                  style={{ fontSize: "1.25rem", zIndex: 10 }}
-                ></i>
-              </div>
+              <label className="form-label">Date of Birth</label>
+              <input
+                type="date"
+                className="form-control"
+                name="dateofbirth"
+                value={formData.dateofbirth ? formData.dateofbirth.substring(0, 10) : ""} // Hiển thị ngày ở định dạng YYYY-MM-DD
+                onChange={handleDateChange}
+              />
+            </div>
+            
+            <div className="mb-3">
+              <label className="form-label">Gender</label>
+              <select
+                className="form-control"
+                name="gender"
+                value={formData.gender}
+                onChange={handleSelectChange}
+              >
+                <option value="">Select Gender</option>
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                <option value="3">Other</option>
+              </select>
             </div>
 
             <div className="mb-3">
@@ -232,18 +238,57 @@ export default function Profile() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Status</label>
-              <select
-                className="form-control"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-              >
-                <option value="">Select Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Suspended">Suspended</option>
-              </select>
+              <label className="form-label">passwordhash</label>
+              <div className="input-group">
+                <input
+                  type={showpasswordhash ? "text" : "password"}
+                  className="form-control"
+                  name="passwordhash"
+                  value={formData.passwordhash}
+                  onChange={handleChange}
+                />
+                <i
+                  className={`bi ${showpasswordhash ? "bi-eye" : "bi-eye-slash"} position-absolute top-50 end-0 translate-middle-y px-3 cursor-pointer`}
+                  onClick={() => setShowpasswordhash(!showpasswordhash)}
+                  style={{ fontSize: "1.25rem", zIndex: 10 }}
+                ></i>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Email</label>
+              <div className="input-group">
+                <input
+                  type={showEmail ? "text" : "passwordhash"}
+                  className="form-control"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                <i
+                  className={`bi ${showEmail ? "bi-eye" : "bi-eye-slash"} position-absolute top-50 end-0 translate-middle-y px-3 cursor-pointer`}
+                  onClick={() => setShowEmail(!showEmail)}
+                  style={{ fontSize: "1.25rem", zIndex: 10 }}
+                ></i>
+              </div>
+            </div>
+            
+            <div className="mb-3">
+              <label className="form-label">Phone Number</label>
+              <div className="input-group">
+                <input
+                  type={showphonenumber ? "text" : "passwordhash"}
+                  className="form-control"
+                  name="phonenumber"
+                  value={formData.phonenumber}
+                  onChange={handleChange}
+                />
+                <i
+                  className={`bi ${showphonenumber ? "bi-eye" : "bi-eye-slash"} position-absolute top-50 end-0 translate-middle-y px-3 cursor-pointer`}
+                  onClick={() => setShowphonenumber(!showphonenumber)}
+                  style={{ fontSize: "1.25rem", zIndex: 10 }}
+                ></i>
+              </div>
             </div>
 
             <div className="d-flex justify-content-start mt-4">

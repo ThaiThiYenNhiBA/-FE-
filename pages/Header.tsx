@@ -40,6 +40,7 @@ const Header = () => {
                         </Link>
                     </div>
                 </div>
+
                 {/* Main Content */}
                 <div className="flex flex-col items-center h-auto bg-white shadow-md my-6 relative max-w-6xl mx-auto">
                     <div className="absolute right-8 top-8 flex items-center space-x-2">
@@ -59,6 +60,19 @@ const Header = () => {
                             <span className="text-xl text-black">Story</span>
                         </div>
                     </div>
+                </div>
+
+                {/* Embedded YouTube Video */}
+                <div style={{ position: "relative", width: "100%", height: "600px", overflow: "hidden" }}>
+                    <iframe
+                        src="https://www.youtube.com/embed/siGp9_nMS3Q?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=siGp9_nMS3Q"
+                        width="100%"
+                        height="700"
+                        style={{ position: "absolute", top: "-60px", left: "0", transform: "scale(1)" }}
+                        frameBorder="0"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                    ></iframe>
                 </div>
             </div>
         </>

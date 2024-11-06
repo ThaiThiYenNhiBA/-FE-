@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import "../app/author.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import router from "next/router";
 
 interface FormData {
   fullname: string;
@@ -48,7 +49,7 @@ export default function Author() {
       <div className="Author-settings col-md-9">
         <div className="mb-3">
           <h1 className="mb-4">Edit Author</h1>
-          <button className="btn btn-secondary">Go Back</button>
+          <button className="btn btn-secondary"  onClick={() => router.push('/Author')}>Go Back</button>
         </div>
         <form onSubmit={handleSubmit} className="p-3" style={{ border: '1px solid #ccc' }}>
           <div className="mb-3">
