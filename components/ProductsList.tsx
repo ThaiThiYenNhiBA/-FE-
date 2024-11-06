@@ -1,9 +1,9 @@
-import {IProduct} from 'boundless-api-client';
-import {TQuery} from '../@types/common';
+import { IProduct } from 'boundless-api-client';
+import { TQuery } from '../@types/common';
 import ProductItem from './productsList/ProductItem';
 
 
-export default function ProductsList({products, query, categoryId}: IProductListProps) {
+export default function ProductsList({ products, query, categoryId }: IProductListProps) {
 	return (
 		<ul className='products list-unstyled'>
 			{products.map(product => (
