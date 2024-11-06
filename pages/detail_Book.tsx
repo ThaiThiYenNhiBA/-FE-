@@ -3,34 +3,34 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router"; // Import useRouter
+
+interface RelatedComic {
+    comicname: string;
+    image: string;
+}
 
 interface ComicDetail {
     comicname: string;
+    comicauthor: string[];
     content: string;
-    introimage?: string;
-    type?: string;
+    type: string;
+    image?: string;
     posteddate?: string;
     catalog: string;
-    description?: string;
-    chapters?: number;
+    description: string;
+    chapters: string[];
+    relatedComic: RelatedComic[];
 }
 
 export default function ProductDetail() {
-    const router = useRouter();
-    const { comicname } = router.query; // Lấy comicname từ URL
     const [comicDetail, setComicDetail] = useState<ComicDetail | null>(null);
     const [selectedModel, setSelectedModel] = useState("Chapter 1");
     const [showAllChapters, setShowAllChapters] = useState(false);
-    const [relatedComics, setRelatedComics] = useState<ComicDetail[]>([]);
 
-    // Fetch comic details
     useEffect(() => {
-        if (!comicname || typeof comicname !== "string") return;
-
         const fetchComicDetail = async () => {
             try {
-                const response = await fetch(`http://localhost:8082/api/comicDetail/${comicname}`);
+                const response = await fetch("http://localhost:8082/api/comicDetail/Batman");
                 if (!response.ok) throw new Error("Failed to fetch comic details");
                 const data: ComicDetail = await response.json();
                 setComicDetail(data);
@@ -40,32 +40,15 @@ export default function ProductDetail() {
         };
 
         fetchComicDetail();
-    }, [comicname]);
-
-    // Fetch related comics based on type
-    useEffect(() => {
-        if (!comicDetail || !comicDetail.type) return;
-
-        const fetchRelatedComics = async () => {
-            try {
-                const response = await fetch(`http://localhost:8082/api/comicsByType/${comicDetail.type}`);
-                if (!response.ok) throw new Error("Failed to fetch related comics");
-                const data: ComicDetail[] = await response.json();
-                setRelatedComics(data);
-            } catch (error) {
-                console.error("Error fetching related comics:", error);
-            }
-        };
-
-        fetchRelatedComics();
-    }, [comicDetail]);
+    }, []);
 
     if (!comicDetail) {
         return <p>Loading...</p>;
     }
 
-    const { content, introimage, type, posteddate, catalog, description, chapters } = comicDetail;
-    const chapterList = Array.from({ length: chapters || 0 }, (_, i) => `Chapter ${i + 1}`);
+    const { comicname, content, image, type, posteddate, catalog, description, chapters, relatedComic } = comicDetail;
+
+    const chapterList = Array.from({ length: chapters.length || 0 }, (_, i) => `Chapter ${i + 1}`);
     const visibleChapters = showAllChapters ? chapterList : chapterList.slice(0, 10);
 
     return (
@@ -76,7 +59,7 @@ export default function ProductDetail() {
             </div>
             <div className="product-detail-container">
                 <div className="product-images">
-                    {introimage && <Image src={introimage} ={comicname} width={300} height={400} />}
+                    {image && <Image src={image} alt={comicname} width={300} height={400} />}
                 </div>
 
                 <div className="product-info">
@@ -99,19 +82,20 @@ export default function ProductDetail() {
                             }}
                             className="w-full mt-2 p-2 border rounded"
                         >
-                            {visibleChapters.map((chapter, index) => (
+                            {chapters.map((chapter, index) => (
                                 <option key={index} value={chapter}>
                                     {chapter}
                                 </option>
                             ))}
+
                             {!showAllChapters && (
-                                <option value="showMore">Xem thêm...</option>
+                                <option value="showMore">See More...</option>
                             )}
                         </select>
                     </div>
                     <div className="product-attributes">
-                        <p><strong>Genre:</strong> {catalog}</p>
-                        <p><strong>Author:</strong> {type || "Unknown"}</p>
+                        <p><strong>Genre:</strong> {type}</p>
+                        <p><strong>Author:</strong> {comicDetail.comicauthor.length > 0 ? comicDetail.comicauthor.join(", ") : "Unknown"}</p>
                         <p><strong>Publication Year:</strong> {posteddate || "N/A"}</p>
                     </div>
                     <div className="product-features">
@@ -126,26 +110,15 @@ export default function ProductDetail() {
                 <button className="btn btn-secondary">Read Full Description</button>
             </div>
             <div className="related-products">
-                <h3>Frequently Bought Together</h3>
+                <h3>Related Comics</h3>
                 <div className="related-product-list">
-                    {relatedComics.length > 0 ? (
-                        relatedComics.map((relatedComic, index) => (
-                            <div className="related-product-item" key={index}>
-                                {relatedComic.introimage && (
-                                    <Image
-                                        src={relatedComic.introimage}
-                                        alt={relatedComic.comicname}
-                                        width={150}
-                                        height={200}
-                                    />
-                                )}
-                                <p>{relatedComic.comicname}</p>
-                                <button className="btn btn-secondary">Read Now</button>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No related comics available.</p>
-                    )}
+                    {relatedComic.map((comic, index) => (
+                        <div className="related-product-item" key={index}>
+                            <Image src={comic.image} alt={comic.comicname} width={150} height={200} />
+                            <p>{comic.comicname}</p>
+                            <button className="btn btn-secondary">Read Now</button>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
