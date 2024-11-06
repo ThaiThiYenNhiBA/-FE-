@@ -1,0 +1,35 @@
+.post-actions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+  }
+  
+  .post-actions-header .like-count {
+    display: flex;
+    align-items: center;
+  }
+  
+  .post-actions-header .comment-count {
+    display: flex;
+    align-items: center;
+    margin-left: 20px; /* Tạo khoảng cách giữa nút Like và bình luận */
+  }
+  
+  .like-button {
+    background-color: #007bff; /* Màu nền của nút */
+    color: #fff; /* Màu chữ */
+    border: none; /* Bỏ viền */
+    padding: 8px 16px; /* Khoảng cách bên trong nút */
+    border-radius: 20px; /* Bo tròn các góc */
+    display: flex;
+    align-items: center;
+    font-size: 1rem; /* Kích thước chữ */
+    cursor: pointer; /* Con trỏ chuột hiển thị khi hover */
+    transition: background-color 0.3s ease;
+  }
+  
+  .like-button:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+  }
+  

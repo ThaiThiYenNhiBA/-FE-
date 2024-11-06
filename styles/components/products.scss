@@ -1,0 +1,201 @@
+$products-gutter: 10px !default;
+
+.products {
+	align-items: stretch;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 15px var(--bs-gutter-x, -0.75rem);
+	padding: 0;
+
+	&__item {
+		background: #fff;
+		border: 1px solid $front-products-border-color;
+		border-radius: 5px;
+		flex-shrink: 0;
+		margin: $products-gutter; // Thêm khoảng cách giữa các sản phẩm
+		padding: 20px;
+		position: relative;
+		transition: all ease-in-out 0.35s;
+
+		// Chiếm 24% chiều rộng để có thể hiển thị 4 sản phẩm trên mỗi hàng
+		width: calc(25% - (2 * #{$products-gutter})); // 4 phần tử mỗi hàng trên màn hình lớn
+
+		&:hover {
+			border-color: transparent;
+			box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.15);
+
+			.products__image {
+				.img {
+					img {
+						transform: scale(1.1);
+					}
+				}
+			}
+		}
+
+		@include media-breakpoint-up(lg) {
+			width: calc(25% - (2 * #{$products-gutter})); // 4 phần tử trên màn hình lớn
+		}
+
+		@include media-breakpoint-up(xl) {
+			width: calc(25% - (2 * #{$products-gutter})); // Vẫn giữ 4 phần tử trên màn hình rất lớn
+		}
+	}
+
+
+
+	&__item-wrapper {
+		align-items: stretch;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		justify-content: flex-start;
+		text-align: center;
+		padding: 20px;
+		/* Tăng padding để phần tử trông to hơn */
+	}
+
+
+	&__title {
+
+		flex-grow: 2;
+		font-size: 0.9rem;
+
+		margin: 30px 0 15px;
+
+		@include media-breakpoint-up(sm) {
+			font-size: 1.1rem;
+		}
+
+		a {
+			color: $front-text-color;
+			text-decoration: none;
+		}
+	}
+
+	&__image {
+		.img {
+			line-height: 0;
+			position: relative;
+			/* Đảm bảo .img có vị trí tương đối để pop-up định vị chính xác */
+			transition: all ease-in-out 0.35s;
+			/* Thêm transition cho hiệu ứng mượt mà */
+
+			>span {
+				overflow: visible !important;
+			}
+
+			/* Áp dụng hiệu ứng mờ cho hình ảnh khi hover */
+			img {
+				height: auto;
+				width: 500px;
+				/* Giữ kích thước hình ảnh nhất quán */
+				transition: filter 0.35s;
+				/* Thêm transition cho hiệu ứng mờ */
+			}
+
+			/* Hiệu ứng hover cho hình ảnh */
+			&:hover img {
+				filter: blur(10px);
+				/* Chỉ áp dụng mờ cho hình ảnh */
+			}
+
+			.author-popup {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: pink;
+				padding: 10px;
+				border-radius: 5px;
+				z-index: 10;
+				pointer-events: none;
+				font-size: 21px;
+				/* Giảm kích thước chữ */
+				font-family: 'Dancing Script', sans-serif;
+				width: 600px;
+				/* Thay đổi kích thước nếu cần */
+				white-space: normal;
+				/* Cho phép xuống dòng */
+				overflow: hidden;
+				/* Ẩn phần văn bản tràn ra ngoài */
+			}
+
+		}
+
+		/* Kích hoạt tương tác với pop-up khi hover */
+		.img:hover .author-popup {
+			pointer-events: auto;
+			/* Cho phép tương tác với pop-up khi hover */
+		}
+	}
+
+
+
+
+
+
+
+	&__offer {
+		margin: 0 0 15px;
+	}
+
+	&__to-cart {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		min-height: 38px;
+	}
+
+	&__price {
+		.from {
+			color: $text-muted;
+			display: inline-block;
+			font-size: 0.8rem;
+			margin: 0 5px;
+		}
+
+		.old {
+
+			color: $text-muted;
+			display: inline-block;
+			font-size: 0.85rem;
+			margin: 0 5px;
+
+			@include media-breakpoint-up(sm) {
+				font-size: 1rem;
+			}
+		}
+
+		.current {
+
+			display: inline-block;
+			font-size: 0.85rem;
+			font-weight: $front-font-weight-bold;
+			margin: 0 5px;
+
+			@include media-breakpoint-up(sm) {
+				font-size: 1rem;
+			}
+
+			&.has-old {
+				color: $front-highlighted-price-color;
+			}
+		}
+	}
+
+	.product__labels {
+		left: 10px;
+		position: absolute;
+		top: 10px;
+	}
+
+	.product__label {
+		border-radius: 4px;
+		margin: 0 0 6px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}

@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import "../app/author.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import '../app/globals.css';
 
 interface FormData {
   fullname: string;
