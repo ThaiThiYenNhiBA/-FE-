@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
@@ -10,7 +11,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-
+    const router = useRouter();
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -30,6 +31,8 @@ const Login = () => {
             console.log(">>>check login:  ", res);
             if (res.success) {
                 toast.success("Login successful!");
+                router.push('/index');
+
             } else {
                 toast.error(res.message || "Login failed!");
             }
