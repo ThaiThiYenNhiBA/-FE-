@@ -81,7 +81,7 @@ const Login = () => {
                         <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                     </span>
                 </div>
-                <Link href="#" className="forgot-password">
+                <Link href="/renewpassword" className="forgot-password">
                     Forgot password?
                 </Link>
                 <button
@@ -94,7 +94,7 @@ const Login = () => {
             </form>
             <p>
                 No account?{' '}
-                <Link href="#">
+                <Link href="/Register">
                     Sign up
                 </Link>
             </p>
