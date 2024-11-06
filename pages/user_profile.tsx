@@ -124,7 +124,7 @@ export default function UserProfile() {
               </div>
             </div>
           ))}
-        </form>
+        </form> 
       
         <div className="d-flex justify-content-start mt-4">
           <button type="button" className="btn btn-danger w-auto me-2" onClick={() => router.push('/edit_user_profile')}>
