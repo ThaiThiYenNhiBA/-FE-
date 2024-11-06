@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
+import '../app/globals.css';
 
 export default function VerifyEmail() {
     const router = useRouter();
