@@ -26,19 +26,11 @@ $products-gutter: 10px !default;
 
 			.products__image {
 				.img {
-					position: relative;
-					transition: all ease-in-out 0.35s;
-
 					img {
-						object-fit: cover;
-						/* Giúp ảnh không bị méo và phủ toàn bộ khu vực chứa */
-						width: 100%;
-						height: 100%;
-						transition: transform 0.35s;
+						transform: scale(1.1);
 					}
 				}
 			}
-
 		}
 
 		@include media-breakpoint-up(lg) {
@@ -208,63 +200,16 @@ $products-gutter: 10px !default;
 	}
 }
 
-/* ComicItem.module.css */
+.products__image {
+	display: block;
+	width: 100%; // Đảm bảo rằng ảnh chiếm 100% chiều rộng của container
+	height: auto; // Giữ nguyên tỷ lệ hình ảnh theo chiều rộng
+	max-width: 100%; // Đảm bảo ảnh không vượt quá chiều rộng container
 
-.productImage {
-	position: relative;
-	display: inline-block;
-}
-
-.imageWrapper {
-	position: relative;
-}
-
-.blurredImage {
-	filter: blur(4px);
-	/* Độ mờ */
-	transition: filter 0.3s ease;
-	/* Hiệu ứng chuyển mượt */
-}
-
-.popUpText {
-	position: absolute;
-	bottom: 10px;
-	left: 50%;
-	transform: translateX(-50%);
-	background-color: rgba(0, 0, 0, 0.7);
-	color: white;
-	padding: 5px 10px;
-	border-radius: 5px;
-	white-space: nowrap;
-	opacity: 0;
-	transition: opacity 0.3s ease;
-}
-
-.imageWrapper:hover .popUpText {
-	opacity: 1;
-	/* Hiển thị pop-up khi hover */
-}
-
-.products__item-wrapper {
-	align-items: stretch;
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	justify-content: flex-start;
-	text-align: center;
-	padding: 20px;
-	/* Tăng padding để phần tử trông to hơn */
-}
-
-.products__title,
-.products__type {
-	margin: 0;
-	/* Loại bỏ khoảng cách mặc định giữa các phần tử */
-	padding: 5px 0;
-	/* Thêm padding nhỏ để giữ khoảng cách hợp lý */
-}
-
-.products__type {
-	margin-top: 20px;
-	/* Giảm khoảng cách giữa tên truyện và thể loại */
+	img {
+		width: 100%;
+		height: auto;
+		object-fit: contain; // Đảm bảo hình ảnh không bị méo và giữ tỷ lệ gốc
+		aspect-ratio: 80 / 123; // Tỷ lệ khung hình cố định nếu bạn biết trước tỷ lệ này
+	}
 }

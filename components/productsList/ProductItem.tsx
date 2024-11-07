@@ -1,111 +1,118 @@
-// components/ProductItem.tsx
-
-import { IProduct } from 'boundless-api-client';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import clsx from 'clsx';
-import { useAppDispatch } from '../../hooks/redux';
-import { addItem2Cart } from '../../redux/actions/cart';
-import { getProductUrl } from '../../lib/urls';
-import ProductListImage from './ProductImage';
-import ProductPrice from './ProductPrice';
-import { TQuery } from '../../@types/common';
 import Link from 'next/link';
-import ProductLabels from '../product/Labels';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartPlus } from '@fortawesome/free-solid-svg-icons/faCartPlus';
-import NoImage from '../NoImage';
-import { productImgRatio } from '../../lib/imgs';
-import { TThumbRatio } from 'boundless-api-client';
-import { findSellingPrice } from '../../lib/product';
-import styles from './ProductItem.module.css';
+import NoImage from '../NoImage'; // Sử dụng component NoImage để thay thế khi không có ảnh
+import { productImgRatio } from '../../lib/imgs'; // Giả sử đã có công cụ này
+import { TThumbRatio } from 'boundless-api-client'; // Thêm tỷ lệ ảnh nếu cần
+
 import PostActions from '../PostActions'; // Import PostActions
 
-export default function ProductItem({ product, query, categoryId }: IProductItemProps) {
-	const params = { ...query };
-	if (categoryId && categoryId !== product.default_category?.category_id) {
-		Object.assign(params, { category: categoryId });
+
+export default function ComicItem({ query }: IComicItemProps) {
+	const [comicsData, setComicsData] = useState<any[]>([]); // Lưu nhiều cuốn truyện vào mảng
+
+	// Gọi API khi component được mount
+	useEffect(() => {
+		axios.get('http://localhost:8082/api/comics?id=1')
+			.then(response => {
+				const newComicsData = response.data.data;
+
+				setComicsData(prevData => {
+					// Lọc ra các comic chưa có trong prevData để tránh trùng lặp
+					const uniqueCatalogs = new Set(prevData.map(comic => comic.catalog));
+					const uniqueComics = newComicsData.filter(comic => !uniqueCatalogs.has(comic.catalog));
+					return [...prevData, ...uniqueComics]; // Thêm các comic mới vào mảng hiện tại
+				});
+			})
+			.catch(error => {
+				console.error("Error fetching comics data:", error);
+			});
+	}, []); // Chạy một lần khi component mount
+
+	if (!comicsData.length) {
+		return <div>Loading...</div>; // Trường hợp chưa có dữ liệu
 	}
-	const productUrl = getProductUrl(product, params);
-	const sellingPrice = findSellingPrice(product.prices);
 
 	return (
-		<li
-			className={clsx('products__item', { 'in-stock': product.in_stock, 'out-of-stock': !product.in_stock })}
-			data-id={product.product_id}
-			itemScope
-			itemType='//schema.org/Product'
-		>
-			<div className='products__item-wrapper'>
-				<ProductImage product={product} productUrl={productUrl} />
-				<h4 className='products__title'>
-					<Link href={productUrl} itemProp='url'>
-						<span itemProp='name'>{product.title}</span>
-					</Link>
-				</h4>
-				<div className='products__offer'>
-					{sellingPrice && <ProductPrice price={sellingPrice} />}
-				</div>
-				<Product2Cart product={product} />
-				{/* Tích hợp PostActions dưới các thông tin sản phẩm */}
-				<PostActions />
-			</div>
-			<ProductSchemaOrgMarkup product={product} />
-		</li>
+		<ul className="products">
+			{comicsData.map((comic, index) => (
+				<li
+					key={index} // Đảm bảo có key duy nhất cho mỗi phần tử trong list
+					className={clsx('products__item')}
+					data-id={comic.catalog}
+					itemScope
+					itemType='//schema.org/Comic'
+				>
+					<div className='products__item-wrapper'>
+						<ComicImage comicImage={comic.introimage} comicUrl={`/comics/${comic.catalog}`} />
+						<h4 className='products__title'>
+							<Link href={`/comics/${comic.catalog}`} itemProp='url'>
+								<span itemProp='name'>Tên truyện: {comic.comicname}</span>
+							</Link>
+						</h4>
+						<div className='products__type'>
+							<span>Thể loại: {comic.type}</span> {/* Hiển thị thể loại */}
+						</div>
+					</div>
+					<PostActions /> {/* Bạn có thể thêm PostActions nếu cần */}
+				</li>
+			))}
+		</ul>
 	);
 }
 
-function Product2Cart({ product }: { product: IProduct }) {
-	const dispatch = useAppDispatch();
-	const onAddToCart = () => dispatch(addItem2Cart(product.item_id, 1));
-
-	// return (
-	// 	<div className='products__to-cart'>
-	// 		<button type='button' className='btn btn-action btn-resp-size' onClick={onAddToCart}>
-	// 			Tác Giả: Sakura
-	// 		</button>
-	// 	</div>
-	// );
-}
-
-function ProductImage({ product, productUrl }: { product: IProduct; productUrl: string }) {
-	const img = product.images!.find(({ is_default }) => is_default);
+function ComicImage({ comicImage, comicUrl }: { comicImage: string; comicUrl: string }) {
+	const [isHovered, setIsHovered] = useState(false);
 
 	return (
-		<Link href={productUrl} className={'products__image'}>
-			{img ? <ProductListImage image={img} alt={img.alt || product.title} /> : <NoImage ratio={productImgRatio || TThumbRatio['1-1']} />}
-			<ProductLabels labels={product.labels!} className={'product__labels_small product__labels_column'} />
+		<Link href={comicUrl} style={{ position: 'relative', display: 'inline-block' }}>
+			<div
+				style={{ position: 'relative' }}
+				onMouseEnter={() => setIsHovered(true)}
+				onMouseLeave={() => setIsHovered(false)}
+			>
+				{comicImage ? (
+					<img
+						src={comicImage}
+						alt="Comic image"
+						style={{
+							width: '100%',
+							height: 'auto',
+							objectFit: 'contain',
+							aspectRatio: '80 / 123',
+							filter: isHovered ? 'blur(4px)' : 'none',
+							transition: 'filter 0.3s ease',
+						}}
+					/>
+				) : (
+					<NoImage ratio={productImgRatio || TThumbRatio['1-1']} />
+				)}
+				{isHovered && (
+					<div
+						style={{
+							position: 'absolute',
+							bottom: '20px',
+							left: '50%',
+							transform: 'translateX(-50%)',
+							backgroundColor: 'rgba(0, 0, 0, 0)',
+							color: '#d63384',
+							padding: '5px 10px',
+							borderRadius: '5px',
+							whiteSpace: 'nowrap',
+							opacity: isHovered ? 1 : 0,
+							transition: 'opacity 0.3s ease',
+						}}
+					>
+						{/* Nội dung pop-up */}
+						Đây là mô tả truyện
+					</div>
+				)}
+			</div>
 		</Link>
 	);
 }
 
-function ProductSchemaOrgMarkup({ product }: { product: IProduct }) {
-	const schemaAvailability = product.in_stock ? '//schema.org/InStock' : '//schema.org/OutOfStock';
-	const sellingPrice = findSellingPrice(product.prices);
-
-	return (
-		<>
-			<meta itemProp='productID' content={String(product.product_id)} />
-			<meta itemProp='brand' content={product.manufacturer?.title || ''} />
-			<meta itemProp='sku' content={product.sku || ''} />
-			{sellingPrice && (sellingPrice?.min ? (
-				<div itemProp='offers' itemScope itemType='//schema.org/AggregateOffer'>
-					<meta itemProp='lowPrice' content={String(sellingPrice.min)} />
-					<meta itemProp='highPrice' content={String(sellingPrice.max)} />
-					<meta itemProp='priceCurrency' content={sellingPrice.currency_alias?.toUpperCase()} />
-					<link itemProp='availability' href={schemaAvailability} />
-				</div>
-			) : (
-				<div itemProp='offers' itemScope itemType='//schema.org/Offer'>
-					<meta itemProp='price' content={String(sellingPrice.value)} />
-					<meta itemProp='priceCurrency' content={sellingPrice.currency_alias?.toUpperCase()} />
-					<link itemProp='availability' href={schemaAvailability} />
-				</div>
-			))}
-		</>
-	);
-}
-
-interface IProductItemProps {
-	product: IProduct;
-	query: TQuery;
-	categoryId?: number;
+interface IComicItemProps {
+	query: any;
 }
